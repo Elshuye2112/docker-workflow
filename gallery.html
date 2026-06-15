@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berhan Bank — Docker Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+ 
+    header {
+      background: #003580;
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+ 
+    header img {
+      height: 60px;
+      object-fit: contain;
+    }
+ 
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+ 
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+ 
+    main {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+ 
+    .intro {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+ 
+    .intro h2 {
+      font-size: 1.8rem;
+      color: #003580;
+      margin-bottom: 10px;
+    }
+ 
+    .intro p {
+      font-size: 1rem;
+      color: #555;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+ 
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+ 
+    @media (max-width: 600px) {
+      .cards { grid-template-columns: 1fr; }
+    }
+ 
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border-top: 4px solid #003580;
+    }
+ 
+    .card.docker {
+      border-top-color: #0db7ed;
+    }
+ 
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+ 
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+ 
+    .badge.before { background: #ffe0e0; color: #c00; }
+    .badge.after  { background: #e0f4ff; color: #0077b6; }
+ 
+    .card ul {
+      list-style: none;
+      padding: 0;
+    }
+ 
+    .card ul li {
+      padding: 6px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.92rem;
+      color: #444;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+ 
+    .card ul li:last-child { border-bottom: none; }
+ 
+    .card ul li::before {
+      content: '•';
+      color: #003580;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+ 
+    .card.docker ul li::before { color: #0db7ed; }
+ 
+    .steps {
+      background: white;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+ 
+    .steps h3 {
+      font-size: 1.1rem;
+      color: #003580;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8edf5;
+    }
+ 
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 18px;
+      align-items: flex-start;
+    }
+ 
+    .step-num {
+      background: #003580;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+ 
+    .step-content h4 {
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      color: #1a1a2e;
+    }
+ 
+    .step-content code {
+      background: #1a1a2e;
+      color: #7ec8e3;
+      font-size: 0.82rem;
+      padding: 4px 10px;
+      border-radius: 5px;
+      display: inline-block;
+      font-family: 'Courier New', monospace;
+    }
+ 
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #888;
+      font-size: 0.85rem;
+    }
+ 
+    .status-bar {
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 8px;
+      padding: 12px 20px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #2e7d32;
+    }
+ 
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: #4caf50;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+      flex-shrink: 0;
+    }
+ 
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+ 
+    .cmd-gallery {
+      background: white;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-top: 24px;
+    }
+ 
+    .cmd-gallery h3 {
+      font-size: 1.1rem;
+      color: #003580;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8edf5;
+    }
+ 
+    .cmd-group {
+      margin-bottom: 24px;
+    }
+ 
+    .cmd-group-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #0db7ed;
+      margin-bottom: 10px;
+    }
+ 
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+    }
+ 
+    .cmd-card {
+      background: #f7fafd;
+      border: 1px solid #e0eaf5;
+      border-left: 3px solid #0db7ed;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+ 
+    .cmd-card code {
+      display: block;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      color: #003580;
+      background: #e8f0fb;
+      padding: 5px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      word-break: break-all;
+    }
+ 
+    .cmd-card .cmd-desc {
+      font-size: 0.8rem;
+      color: #666;
+      line-height: 1.4;
+    }
+ 
+    .cmd-group:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+ 
+  <header>
+    <img src="berhanlogo.PNG" alt="Berhan Bank Logo" />
+    <div>
+      <h1>Berhan Bank</h1>
+      <p>Docker Containerization Demo at Excellence Center!</p>
+    </div>
+  </header>
+ 
+  <main>
+    <div class="status-bar">
+      <span class="dot"></span>
+      App is running successfully — served by Node.js HTTP server on port 4000
+    </div>
+ 
+    <div class="intro">
+      <h2>From Manual Setup to Docker</h2>
+      <p>This demo shows how a simple Node.js app is deployed the traditional way vs. inside a Docker container — and why containers make life easier.</p>
+    </div>
+ 
+    <div class="cards">
+      <div class="card">
+        <h3>Before Docker <span class="badge before">Traditional</span></h3>
+        <ul>
+          <li>Install Node.js manually on every machine</li>
+          <li>Match exact Node.js version across environments</li>
+          <li>Run <code style="font-size:0.78rem;background:#f5f5f5;color:#333;padding:1px 5px;border-radius:3px;">node app.js</code> directly on the host OS</li>
+          <li>Works on your machine, may break on others</li>
+          <li>Manual steps to set up each new server</li>
+          <li>No isolation between apps on the same server</li>
+        </ul>
+      </div>
+ 
+      <div class="card docker">
+        <h3>With Docker <span class="badge after">Containerized</span></h3>
+        <ul>
+          <li>One Dockerfile defines the entire environment</li>
+          <li>Same image runs identically everywhere</li>
+          <li>No Node.js needed on the host — just Docker</li>
+          <li>Isolated from other apps on the same machine</li>
+          <li>Deploy with a single <code style="font-size:0.78rem;background:#f5f5f5;color:#0077b6;padding:1px 5px;border-radius:3px;">docker run</code> command</li>
+          <li>Push to Docker Hub — pull and run anywhere</li>
+        </ul>
+      </div>
+    </div>
+ 
+    <div class="steps">
+      <h3>Docker Workflow — Step by Step</h3>
+ 
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Build the image</h4>
+          <code>docker build -t berhanbank-app .</code>
+        </div>
+      </div>
+ 
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Run locally</h4>
+          <code>docker run -p 3000:3000 berhanbank-app</code>
+        </div>
+      </div>
+ 
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Tag &amp; push to Docker Hub</h4>
+          <code>docker push yourusername/berhanbank-app</code>
+        </div>
+      </div>
+ 
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Pull &amp; run anywhere</h4>
+          <code>docker pull yourusername/berhanbank-app</code>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="cmd-gallery">
+      <h3>Docker Commands Reference</h3>
+ 
+      <div class="cmd-group">
+        <div class="cmd-group-title">Images</div>
+        <div class="cmd-grid">
+          <div class="cmd-card">
+            <code>docker build -t my-app .</code>
+            <div class="cmd-desc">Build an image from a Dockerfile in the current directory</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker images</code>
+            <div class="cmd-desc">List all locally available images</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker rmi my-app</code>
+            <div class="cmd-desc">Delete a local image by name or ID</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker tag my-app user/my-app:v1</code>
+            <div class="cmd-desc">Tag an image before pushing to a registry</div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="cmd-group">
+        <div class="cmd-group-title">Containers</div>
+        <div class="cmd-grid">
+          <div class="cmd-card">
+            <code>docker run -d -p 4000:4000 my-app</code>
+            <div class="cmd-desc">Run a container in the background and map port 4000</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker ps</code>
+            <div class="cmd-desc">List currently running containers</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker ps -a</code>
+            <div class="cmd-desc">List all containers including stopped ones</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker stop &lt;container&gt;</code>
+            <div class="cmd-desc">Gracefully stop a running container</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker rm &lt;container&gt;</code>
+            <div class="cmd-desc">Remove a stopped container</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker rm -f &lt;container&gt;</code>
+            <div class="cmd-desc">Force-remove a running container immediately</div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="cmd-group">
+        <div class="cmd-group-title">Logs &amp; Debugging</div>
+        <div class="cmd-grid">
+          <div class="cmd-card">
+            <code>docker logs &lt;container&gt;</code>
+            <div class="cmd-desc">Print the stdout/stderr logs of a container</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker logs -f &lt;container&gt;</code>
+            <div class="cmd-desc">Follow (tail) live logs from a running container</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker exec -it &lt;container&gt; sh</code>
+            <div class="cmd-desc">Open an interactive shell inside a running container</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker inspect &lt;container&gt;</code>
+            <div class="cmd-desc">Show detailed low-level info about a container or image</div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="cmd-group">
+        <div class="cmd-group-title">Registry</div>
+        <div class="cmd-grid">
+          <div class="cmd-card">
+            <code>docker login</code>
+            <div class="cmd-desc">Authenticate to Docker Hub (or a private registry)</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker push user/my-app:v1</code>
+            <div class="cmd-desc">Upload a tagged image to Docker Hub</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker pull user/my-app:v1</code>
+            <div class="cmd-desc">Download an image from Docker Hub</div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="cmd-group">
+        <div class="cmd-group-title">Cleanup</div>
+        <div class="cmd-grid">
+          <div class="cmd-card">
+            <code>docker system prune</code>
+            <div class="cmd-desc">Remove all stopped containers, dangling images, and unused networks</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker volume ls</code>
+            <div class="cmd-desc">List all Docker volumes on this machine</div>
+          </div>
+          <div class="cmd-card">
+            <code>docker network ls</code>
+            <div class="cmd-desc">List all Docker networks</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+ 
+  <footer>
+    Berhan Bank &mdash; Docker Demo &mdash; Node.js + Docker
+  </footer>
+ 
+</body>
+</html>
+ 
+ 
