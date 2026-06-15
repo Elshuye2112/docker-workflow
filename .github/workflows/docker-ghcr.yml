@@ -33,5 +33,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/my-node-app:latest
-            ghcr.io/${{ github.repository_owner }}/my-node-app:${{ github.sha }}
+            ghcr.io/elshuye2112/my-node-app:latest
+            ghcr.io/elshuye2112/my-node-app:${{ github.sha }}
